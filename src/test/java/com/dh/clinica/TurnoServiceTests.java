@@ -38,11 +38,9 @@ public class TurnoServiceTests {
 
     }
     @Test
-    public void altaTurnoTest(){
-
+    public void altaTurnoTest() throws BadRequestException {
         this.cargarDataSet();
         turnoService.registrarTurno(new Turno(pacienteService.buscar(1).get(),odontologoService.buscar(1).get(),new Date()));
-
         Assert.assertNotNull(turnoService.buscar(1));
 
     }

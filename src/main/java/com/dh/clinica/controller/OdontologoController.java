@@ -1,5 +1,6 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.exceptions.BadRequestException;
 import com.dh.clinica.model.Odontologo;
 
 import com.dh.clinica.service.OdontologoService;
@@ -17,11 +18,10 @@ public class OdontologoController {
     @Autowired
     private OdontologoService odontologoService;
 
-    @PostMapping("/new")
-    public ResponseEntity<Odontologo> registrarOdontologo(@RequestBody Odontologo odontologo) {
-
-        return ResponseEntity.ok(odontologoService.registrarOdontologo(odontologo));
-
+    @PostMapping
+    public ResponseEntity<?> registrarOdontologo(@RequestBody Odontologo odontologoDTO) throws BadRequestException {
+        odontologoService.registrarOdontologo(odontologoDTO);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/buscar/{id}")

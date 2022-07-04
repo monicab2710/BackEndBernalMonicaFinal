@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
 @RequestMapping("/turnos")
 public class TurnoController {
@@ -23,17 +25,12 @@ public class TurnoController {
     @Autowired
     private OdontologoService odontologoService;
 
-    @PostMapping("/addturno")
-    public ResponseEntity<Turno> registrarTurno(@RequestBody Turno turno) {
-        ResponseEntity<Turno> response;
-        if (pacienteService.buscar(Math.toIntExact(turno.getPaciente().getId())).isPresent() && odontologoService.buscar(Math.toIntExact(turno.getOdontologo().getId())).isPresent())
-            response = ResponseEntity.ok(turnoService.registrarTurno(turno));
+    //
 
-        else
-            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
-        return response;
-
+    @PostMapping
+    public ResponseEntity<?> registrarTurno(@RequestBody Turno turno) throws BadRequestException {
+        turnoService.registrarTurno(turno);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/turnos")
@@ -42,7 +39,7 @@ public class TurnoController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id)  throws BadRequestException{
         ResponseEntity<String> response;
         if (turnoService.buscar(id).isPresent()) {
             try {
@@ -50,9 +47,9 @@ public class TurnoController {
             } catch (BadRequestException e) {
                 e.printStackTrace();
             }
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");
+            response = ResponseEntity.status(NO_CONTENT).body("Eliminado");
         } else {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            response = ResponseEntity.status(NOT_FOUND).build();
         }
         return response;
     }
@@ -61,6 +58,11 @@ public class TurnoController {
     public ResponseEntity<Turno> actualizarTurno(@RequestBody Turno turno) {
         return ResponseEntity.ok(turnoService.actualizar(turno));
 
+    }
+
+    @ExceptionHandler ({BadRequestException.class})
+
+    public ResponseEntity<String> procesarErrorBadRequest(BadRequestException ex) {return ResponseEntity.status(BAD_REQUEST).body(ex .getMessage());
     }
 
 
