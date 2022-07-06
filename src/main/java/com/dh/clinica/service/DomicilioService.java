@@ -27,6 +27,8 @@ public class DomicilioService {
     public List<Domicilio> buscarTodos(){
         return domicilioRepository.findAll();
     }
+
+    
     public void eliminar(Integer id){
         domicilioRepository.deleteById(Long.valueOf(id));
     }
