@@ -1,6 +1,7 @@
 package com.dh.clinica;
 
 import com.dh.clinica.exceptions.BadRequestException;
+import com.dh.clinica.exceptions.ResourceNoFoundException;
 import com.dh.clinica.model.Domicilio;
 import com.dh.clinica.model.Odontologo;
 import com.dh.clinica.model.Paciente;
@@ -49,16 +50,10 @@ public class TurnoServiceTests {
         Assert.assertNotNull(turnoService.buscar(1));
     }
     @Test
-    public void eliminarTurnoTest(){
-        try {
-            turnoService.eliminar(1);
-        } catch (BadRequestException e) {
-            e.printStackTrace();
-        }
+    public void eliminarTurnoTest() throws ResourceNoFoundException {
+        turnoService.eliminar(1);
         Assert.assertFalse(turnoService.buscar(1).isPresent());
     }
-
-
 
 
 }

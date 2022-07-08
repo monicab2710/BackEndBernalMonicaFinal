@@ -1,6 +1,7 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.exceptions.BadRequestException;
+import com.dh.clinica.exceptions.ResourceNoFoundException;
 import com.dh.clinica.model.Turno;
 import com.dh.clinica.service.OdontologoService;
 import com.dh.clinica.service.PacienteService;
@@ -28,42 +29,45 @@ public class TurnoController {
     //
 
     @PostMapping
-    public ResponseEntity<?> registrarTurno(@RequestBody Turno turno) throws BadRequestException {
-        turnoService.registrarTurno(turno);
-        return ResponseEntity.ok(HttpStatus.OK);
+    public ResponseEntity<Turno> registrarTurno(@RequestBody Turno turno) {
+        ResponseEntity<Turno> response;
+        if (pacienteService.buscar(turno.getPaciente().getId()).isPresent() && odontologoService.buscar(turno.getOdontologo().getId()).isPresent()) {
+            response = ResponseEntity.ok(turnoService.registrarTurno(turno));
+        }
+
+        else
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        return response;
     }
 
-    @GetMapping("/turnos")
+    @GetMapping("/{id}")
     public ResponseEntity<List<Turno>> listar() {
         return ResponseEntity.ok(turnoService.listar());
     }
 
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Integer id)  throws BadRequestException{
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         ResponseEntity<String> response;
         if (turnoService.buscar(id).isPresent()) {
             try {
                 turnoService.eliminar(id);
-            } catch (BadRequestException e) {
-                e.printStackTrace();
+            } catch (ResourceNoFoundException e) {
+                throw new RuntimeException(e);
             }
-            response = ResponseEntity.status(NO_CONTENT).body("Eliminado");
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");
         } else {
-            response = ResponseEntity.status(NOT_FOUND).build();
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return response;
     }
 
-    @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Turno> actualizarTurno(@RequestBody Turno turno) {
+    @PutMapping
+    public ResponseEntity<Turno> actualizarTurno(@RequestBody Turno turno) throws ResourceNoFoundException{
         return ResponseEntity.ok(turnoService.actualizar(turno));
-
     }
 
-    @ExceptionHandler ({BadRequestException.class})
-
-    public ResponseEntity<String> procesarErrorBadRequest(BadRequestException ex) {return ResponseEntity.status(BAD_REQUEST).body(ex .getMessage());
-    }
 
 
 }
+
