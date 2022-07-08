@@ -35,10 +35,10 @@ public class PacienteServiceTest {
 
 
     public void cargarDataSet() {
-        Domicilio domicilio = new Domicilio("Av Santa fe", "444", "CABA", "Buenos Aires");
+        Domicilio domicilio = new Domicilio("Av leones", "444", "CABA", "Bogota");
         Paciente p = pacienteService.guardar(new Paciente("Santiago", "Paz", "88888888", new Date(), domicilio));
-        Domicilio domicilio1 = new Domicilio("Av Avellaneda", "333", "CABA", "Buenos Aires");
-        Paciente p1 = pacienteService.guardar(new Paciente("Micaela", "Perez", "99999999", new Date(), domicilio1));
+        Domicilio domicilio1 = new Domicilio("Av 456", "333", "CABA", "Barichara");
+        Paciente p1 = pacienteService.guardar(new Paciente("Andrea", "Bautista", "99999999", new Date(), domicilio1));
 
     }
 
